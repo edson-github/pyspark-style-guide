@@ -30,10 +30,7 @@ class StatementCallChecker(BaseChecker):
 
     def is_line_split(self, function):
         line = function.lineno
-        for arg in function.args.args:
-            if arg.lineno != line:
-                return True
-        return False
+        return any(arg.lineno != line for arg in function.args.args)
 
     def __init__(self, linter=None):
         super(StatementCallChecker, self).__init__(linter)

@@ -8,17 +8,11 @@ import astroid
 
 
 def compute_arguments_length(arguments):
-    args_length = 0
-    for arg in arguments:
-        args_length += get_length(arg)
-    return args_length
+    return sum(get_length(arg) for arg in arguments)
 
 
 def compute_target_lengths(targets):
-    total_length = 0
-    for target in targets:
-        total_length += get_length(target)
-    return total_length
+    return sum(get_length(target) for target in targets)
 
 
 def select_contains_alias_call(expression):
@@ -44,15 +38,9 @@ def select_contains_cast_call(expression):
 def is_line_split(val):
     line = val.lineno
     if isinstance(val, astroid.nodes.Function):
-        for arg in val.args.args:
-            if arg.lineno != line:
-                return True
-        return False
+        return any(arg.lineno != line for arg in val.args.args)
     if isinstance(val, astroid.nodes.Call):
-        for arg in val.args:
-            if arg.lineno != line:
-                return True
-        return False
+        return any(arg.lineno != line for arg in val.args)
     if isinstance(val, astroid.nodes.Assign):
         if hasattr(val.value, 'args'):
             for arg in val.value.args: 
